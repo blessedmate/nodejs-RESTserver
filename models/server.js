@@ -22,14 +22,19 @@ class Server {
     });
   }
 
-  routes() {
-    this.app.use(this.usersEndpoint, require("../routes/users_routes"));
-  }
-
   middlewares() {
     // Public directory
     this.app.use(express.static("public"));
+
+    // Cors
     this.app.use(cors());
+
+    // Read and parse requests' body
+    this.app.use(express.json());
+  }
+
+  routes() {
+    this.app.use(this.usersEndpoint, require("../routes/users_routes"));
   }
 }
 

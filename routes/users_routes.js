@@ -11,7 +11,7 @@ const router = Router();
 
 // CRUD routes
 router.get("/", getUsers);
-router.put("/", putUsers);
+router.put("/:id", putUsers);
 router.post("/", postUsers);
 router.patch("/", patchUsers);
 router.delete("/", deleteUsers);
