@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
 
-const { validateFields } = require("../middlewares/validations");
+const { validateFields } = require("../middlewares/field-validations");
 const {
   getUsers,
   postUsers,
@@ -9,12 +9,25 @@ const {
   patchUsers,
   deleteUsers,
 } = require("../controllers/users_controller");
+const {
+  isValidRole,
+  emailExists,
+  userExistsById,
+} = require("../helpers/db-validators");
 
 const router = Router();
 
 // CRUD routes
 router.get("/", getUsers);
-router.put("/:id", putUsers);
+router.put(
+  "/:id",
+  [
+    check("id", "Not a valid ID").isMongoId(),
+    check("id").custom(userExistsById),
+    validateFields,
+  ],
+  putUsers
+);
 router.post(
   "/",
   [
@@ -23,8 +36,10 @@ router.post(
       min: 6,
     }),
     check("email", "Email is not valid").isEmail(),
-    // check("role", "Not a valid role").isIn(["ADMIN_ROLE", "USER_ROLE"]),
+    check("email").custom(emailExists),
+    check("role").custom(isValidRole),
     validateFields,
+    // check("role", "Not a valid role").isIn(["ADMIN_ROLE", "USER_ROLE"]),
   ],
   postUsers
 );

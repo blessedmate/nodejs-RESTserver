@@ -20,7 +20,7 @@ const UserSchema = Schema({
   role: {
     type: String,
     required: true,
-    enum: ["ADMIN_ROLE", "USER_ROLE"],
+    // enum: ["ADMIN_ROLE", "USER_ROLE"],
   },
   state: {
     type: Boolean,
@@ -31,5 +31,12 @@ const UserSchema = Schema({
     default: false,
   },
 });
+
+// This method is called when saving a new document
+// The idea is to override and delete the password field when returning a response
+UserSchema.methods.toJSON = function () {
+  const { __v, password, ...user } = this.toObject();
+  return user;
+};
 
 module.exports = model("User", UserSchema);
