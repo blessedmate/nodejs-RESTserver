@@ -68,7 +68,10 @@ const deleteUsers = async (req, res) => {
   // Change to inactive user
   const user = await User.findByIdAndUpdate(id, { state: false });
 
-  res.json(user);
+  // Get the logged user's info
+  const authUser = req.authUser;
+
+  res.json({ user, authUser });
 };
 
 module.exports = {
