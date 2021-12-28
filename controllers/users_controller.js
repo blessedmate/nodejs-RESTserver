@@ -3,13 +3,24 @@ const bcryptjs = require("bcryptjs");
 
 const User = require("../models/user");
 
-const getUsers = (req = request, res = response) => {
-  const { apikey } = req.query;
+const getUsers = async (req = request, res = response) => {
+  // Can set a limited number of results, and starting point
+  const { limit = 0, from = 0 } = req.query;
 
-  res.json({
-    msg: "get API - controller",
-    apikey,
-  });
+  // Return users with state=true (active users)
+  const activeUsers = { state: true };
+
+  // const users = await User.find(activeUsers)
+  //   .skip(Number(from))
+  //   .limit(Number(limit));
+  // const total = await User.countDocuments(activeUsers);
+
+  const [total, users] = await Promise.all([
+    User.countDocuments(activeUsers),
+    User.find(activeUsers).skip(Number(from)).limit(Number(limit)),
+  ]);
+
+  res.json({ total, users });
 };
 
 const postUsers = async (req = request, res = response) => {
@@ -23,9 +34,7 @@ const postUsers = async (req = request, res = response) => {
   // Save in DB
   await user.save();
 
-  res.status(201).json({
-    user,
-  });
+  res.status(201).json(user);
 };
 
 const putUsers = async (req = request, res = response) => {
@@ -41,9 +50,7 @@ const putUsers = async (req = request, res = response) => {
 
   const user = await User.findByIdAndUpdate(id, info);
 
-  res.json({
-    user,
-  });
+  res.json(user);
 };
 
 const patchUsers = (req = request, res = response) => {
@@ -52,10 +59,16 @@ const patchUsers = (req = request, res = response) => {
   });
 };
 
-const deleteUsers = (req, res) => {
-  res.json({
-    msg: "delete API - controller",
-  });
+const deleteUsers = async (req, res) => {
+  const { id } = req.params;
+
+  // Delete completely
+  // const user = await User.findByIdAndDelete(id);
+
+  // Change to inactive user
+  const user = await User.findByIdAndUpdate(id, { state: false });
+
+  res.json(user);
 };
 
 module.exports = {
