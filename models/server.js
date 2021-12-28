@@ -9,6 +9,7 @@ class Server {
 
     // Available endpoints
     this.usersEndpoint = "/api/users";
+    this.authEndpoint = "/api/auth";
 
     // DB connection
     this.connectDB();
@@ -42,6 +43,7 @@ class Server {
   }
 
   routes() {
+    this.app.use(this.authEndpoint, require("../routes/auth_routes"));
     this.app.use(this.usersEndpoint, require("../routes/users_routes"));
   }
 }

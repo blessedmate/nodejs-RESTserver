@@ -18,7 +18,10 @@ const {
 const router = Router();
 
 // CRUD routes
+// Get users
 router.get("/", getUsers);
+
+// Update user
 router.put(
   "/:id",
   [
@@ -28,6 +31,8 @@ router.put(
   ],
   putUsers
 );
+
+// Create user
 router.post(
   "/",
   [
@@ -43,6 +48,8 @@ router.post(
   ],
   postUsers
 );
+
+// Delete user
 router.delete(
   "/:id",
   [
