@@ -32,7 +32,6 @@ const hasRole = (...roles) => {
       });
     }
 
-    console.log(roles);
     next();
   };
 };

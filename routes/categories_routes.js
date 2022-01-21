@@ -1,8 +1,15 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
-const { createCategory } = require("../controllers/categories_controller");
+const {
+  createCategory,
+  getCategories,
+  getCategory,
+  updateCategory,
+  deleteCategory,
+} = require("../controllers/categories_controller");
+const { categoryExistsById } = require("../helpers/db-validators");
 
-const { validateJWT, validateFields } = require("../middlewares");
+const { validateJWT, validateFields, hasRole } = require("../middlewares");
 
 const router = Router();
 
@@ -11,14 +18,18 @@ const router = Router();
  */
 
 // Get all categories -> public
-router.get("/", (req, res) => {
-  res.json("get categories");
-});
+router.get("/", getCategories);
 
 // Get one category -> public
-router.get("/:id", (req, res) => {
-  res.json("get category by id");
-});
+router.get(
+  "/:id",
+  [
+    check("id", "Not a valid ID").isMongoId(),
+    check("id").custom(categoryExistsById),
+    validateFields,
+  ],
+  getCategory
+);
 
 // Create one category -> private
 router.post(
@@ -28,13 +39,29 @@ router.post(
 );
 
 // Update one category -> private
-router.put("/:id", (req, res) => {
-  res.json("put category");
-});
+router.put(
+  "/:id",
+  [
+    check("id", "Not a valid ID").isMongoId(),
+    check("id").custom(categoryExistsById),
+    validateFields,
+  ],
+  updateCategory
+);
 
 // Delete one category -> private (admin)
-router.delete("/:id", (req, res) => {
-  res.json("delete category");
-});
+router.delete(
+  "/:id",
+  [
+    validateJWT,
+    // Allow multiple specified roles
+    hasRole("ADMIN_ROLE", "SALES_ROLE"),
+
+    check("id", "Not a valid ID").isMongoId(),
+    check("id").custom(categoryExistsById),
+    validateFields,
+  ],
+  deleteCategory
+);
 
 module.exports = router;

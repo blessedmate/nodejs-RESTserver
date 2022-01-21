@@ -31,6 +31,7 @@ const validateJWT = async (req = request, res = response, next) => {
       });
     }
 
+    // Add the authenticated user to the request
     req.authUser = authUser;
 
     next();
