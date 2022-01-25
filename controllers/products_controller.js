@@ -67,9 +67,30 @@ const updateProduct = async (req = request, res = response) => {
   res.json(product);
 };
 
+// deleteProduct
+const deleteProduct = async (req = request, res = response) => {
+  const { id } = req.params;
+
+  // Delete completely
+  // const prod = await Product.findByIdAndDelete(id);
+
+  // Change to inactive product
+  const product = await Product.findByIdAndUpdate(
+    id,
+    { status: false },
+    { new: true }
+  );
+
+  // Get the logged user's info
+  const authUser = req.authUser;
+
+  res.json({ product, authUser });
+};
+
 module.exports = {
   getProducts,
   createProduct,
   getProduct,
   updateProduct,
+  deleteProduct,
 };

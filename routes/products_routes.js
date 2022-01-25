@@ -5,6 +5,7 @@ const {
   getProducts,
   getProduct,
   updateProduct,
+  deleteProduct,
 } = require("../controllers/products_controller");
 const {
   categoryExistsById,
@@ -61,19 +62,19 @@ router.put(
   updateProduct
 );
 
-// // Delete one product -> private (admin)
-// router.delete(
-//   "/:id",
-//   [
-//     validateJWT,
-//     // Allow multiple specified roles
-//     hasRole("ADMIN_ROLE", "SALES_ROLE"),
+// Delete one product -> private (admin)
+router.delete(
+  "/:id",
+  [
+    validateJWT,
+    // Allow multiple specified roles
+    hasRole("ADMIN_ROLE", "SALES_ROLE"),
 
-//     check("id", "Not a valid ID").isMongoId(),
-//     check("id").custom(categoryExistsById),
-//     validateFields,
-//   ],
-//   deleteCategory
-// );
+    check("id", "Not a valid ID").isMongoId(),
+    check("id").custom(productExistsById),
+    validateFields,
+  ],
+  deleteProduct
+);
 
 module.exports = router;
