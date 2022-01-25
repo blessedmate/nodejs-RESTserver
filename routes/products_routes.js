@@ -3,8 +3,12 @@ const { check } = require("express-validator");
 const {
   createProduct,
   getProducts,
+  getProduct,
 } = require("../controllers/products_controller");
-const { categoryExistsById } = require("../helpers/db-validators");
+const {
+  categoryExistsById,
+  productExistsById,
+} = require("../helpers/db-validators");
 
 const { validateJWT, validateFields, hasRole } = require("../middlewares");
 
@@ -17,16 +21,16 @@ const router = Router();
 // Get all products -> public
 router.get("/", getProducts);
 
-// // Get one product -> public
-// router.get(
-//   "/:id",
-//   [
-//     check("id", "Not a valid ID").isMongoId(),
-//     check("id").custom(categoryExistsById),
-//     validateFields,
-//   ],
-//   getCategory
-// );
+// Get one product -> public
+router.get(
+  "/:id",
+  [
+    check("id", "Not a valid ID").isMongoId(),
+    check("id").custom(productExistsById),
+    validateFields,
+  ],
+  getProduct
+);
 
 // Create one product -> private
 router.post(

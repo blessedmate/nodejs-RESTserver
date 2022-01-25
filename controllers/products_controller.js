@@ -21,6 +21,16 @@ const getProducts = async (req = request, res = response) => {
   res.json({ total, products });
 };
 
+// getProduct - populate {}
+const getProduct = async (req = request, res = response) => {
+  const { id } = req.params;
+  const product = await Product.findById(id)
+    .populate("user", "name")
+    .populate("category", "name");
+
+  res.json(product);
+};
+
 const createProduct = async (req = request, res = response) => {
   const name = req.body.name.toUpperCase();
   const category = req.body.category.toUpperCase();
@@ -48,4 +58,5 @@ const createProduct = async (req = request, res = response) => {
 module.exports = {
   getProducts,
   createProduct,
+  getProduct,
 };
