@@ -4,6 +4,7 @@ const {
   createProduct,
   getProducts,
   getProduct,
+  updateProduct,
 } = require("../controllers/products_controller");
 const {
   categoryExistsById,
@@ -47,17 +48,18 @@ router.post(
   createProduct
 );
 
-// // Update one product -> private
-// router.put(
-//   "/:id",
-//   [
-//     validateJWT,
-//     check("id", "Not a valid ID").isMongoId(),
-//     check("id").custom(categoryExistsById),
-//     validateFields,
-//   ],
-//   updateCategory
-// );
+// Update one product -> private
+router.put(
+  "/:id",
+  [
+    validateJWT,
+    check("name", "Name is mandatory").notEmpty(),
+    check("id", "Not a valid ID").isMongoId(),
+    check("id").custom(productExistsById),
+    validateFields,
+  ],
+  updateProduct
+);
 
 // // Delete one product -> private (admin)
 // router.delete(
