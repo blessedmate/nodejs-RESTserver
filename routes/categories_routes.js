@@ -43,7 +43,6 @@ router.put(
   "/:id",
   [
     validateJWT,
-    check("name", "Name is mandatory").notEmpty(),
     check("id", "Not a valid ID").isMongoId(),
     check("id").custom(categoryExistsById),
     validateFields,
