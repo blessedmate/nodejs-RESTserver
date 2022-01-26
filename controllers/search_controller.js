@@ -24,17 +24,26 @@ const search = (req = request, res = response) => {
       break;
 
     default:
-      res.status(500).json({ msg: "Search option not available yet" });
+      return res.status(500).json({ msg: "Search option not available yet" });
   }
 };
 
 const searchUsers = async (term = "", res = response) => {
   const isMongoId = ObjectId.isValid(term);
 
+  // Search user by id
   if (isMongoId) {
     const user = await User.findById(term);
-    res.json({ results: user ? [user] : [] });
+    return res.json({ results: user ? [user] : [] });
   }
+
+  // Search user by name
+  const regex = new RegExp(term, "i");
+  const users = await User.find({
+    $or: [{ name: regex }, { email: regex }],
+    $and: [{ state: true }],
+  });
+  return res.json({ results: users });
 };
 
 module.exports = {
